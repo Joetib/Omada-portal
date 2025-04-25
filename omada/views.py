@@ -221,6 +221,9 @@ def portal_auth(request: HttpRequest):
             **{
                 "username": request.POST.get("username"),
                 "password": request.POST.get("password"),
+                "clientMac": request.POST.get("clientMac"),
+                "siteName": request.POST.get("siteName"),
+                "session": request.POST.get("session"),
             },
         }
 
