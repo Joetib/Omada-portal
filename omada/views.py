@@ -297,7 +297,11 @@ def portal_auth(request: HttpRequest):
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
-        cookies = {c.split("=")[0]: c.split("=")[1] for c in cookie.split(";")}
+        cookies = {
+            c.split("=")[0]: c.split("=")[1]
+            for c in cookie.split(";")
+            if "TPOMADA_SESSIONID" in c
+        }
         print("cookies are: ", cookies)
 
         print(f"Headers: {headers}")
