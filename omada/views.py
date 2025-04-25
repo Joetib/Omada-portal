@@ -114,6 +114,7 @@ def client_list(request):
 
 
 @require_http_methods(["GET", "POST", "OPTIONS"])
+@csrf_exempt
 def portal_login(request: HttpRequest):
     """
     Handle portal login page request.
