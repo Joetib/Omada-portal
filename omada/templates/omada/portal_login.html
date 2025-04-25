@@ -85,7 +85,7 @@
             <h1>Welcome to {{ site_name }}</h1>
             <p>Please login to access the network</p>
         </div>
-        <form class="login-form" id="loginForm">
+        <form class="login-form" id="loginForm" action="." method="POST">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
@@ -99,41 +99,7 @@
         </form>
     </div>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
 
-            try {
-                const response = await fetch('/omada/api/portal/auth/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        clientMac: '{{ client_mac }}',
-                        username: username,
-                        password: password,
-                        site: '{{ site_name }}',
-                        time: Date.now()
-                    })
-                });
-
-                const data = await response.json();
-                if (data.status === 'success') {
-                    window.location.href = '{{ redirect_url }}';
-                } else {
-                    errorMessage.textContent = data.message || 'Authentication failed';
-                    errorMessage.style.display = 'block';
-                }
-            } catch (error) {
-                errorMessage.textContent = 'An error occurred. Please try again.';
-                errorMessage.style.display = 'block';
-            }
-        });
-    </script>
 </body>
 
 </html>

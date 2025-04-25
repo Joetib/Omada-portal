@@ -113,8 +113,8 @@ def client_list(request):
     return JsonResponse({"status": "success", "clients": list(clients.values())})
 
 
-@require_http_methods(["GET"])
-def portal_login(request):
+@require_http_methods(["GET", "POST", "OPTIONS"])
+def portal_login(request: HttpRequest):
     """
     Handle portal login page request.
     Expected query parameters:
@@ -128,6 +128,8 @@ def portal_login(request):
     - redirectUrl: URL to redirect after authentication
     - t: Timestamp
     """
+    if request.method == "POST":
+        return portal_auth(request)
     try:
         # Create or update portal session
         session, updated = PortalSession.objects.update_or_create(
@@ -197,8 +199,6 @@ def get_omada_token(username, password):
         return None
 
 
-@csrf_exempt
-@require_http_methods(["POST"])
 def portal_auth(request: HttpRequest):
     """
     Handle portal authentication request.
