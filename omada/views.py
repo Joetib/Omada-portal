@@ -273,7 +273,7 @@ def portal_auth(request: HttpRequest):
         auth_data = {
             "clientMac": data["clientMac"],
             "site": session.site_name,
-            "time": data["time"],
+            "time": 60 * 5,
             "authType": 4,
         }
 
