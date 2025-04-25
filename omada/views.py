@@ -216,7 +216,13 @@ def portal_auth(request: HttpRequest):
     }
     """
     try:
-        data: dict = {**request.GET, **json.loads(request.body)}
+        data: dict = {
+            **request.GET,
+            **{
+                "username": request.POST.get("username"),
+                "password": request.POST.get("password"),
+            },
+        }
 
         session = PortalSession.objects.get(
             client_mac=data["clientMac"],
