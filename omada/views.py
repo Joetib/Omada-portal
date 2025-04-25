@@ -267,9 +267,7 @@ def portal_auth(request: HttpRequest):
         session.save()
 
         # Send authentication to Omada Controller
-        controller_url = (
-            f"{settings.OMADA_CONTROLLER_URL}/api/v2/hotspot/extPortal/auth"
-        )
+        controller_url = f"{settings.OMADA_CONTROLLER_URL}api/v2/hotspot/extPortal/auth"
         auth_data = {
             "clientMac": data["clientMac"],
             "site": session.site_name,
@@ -299,6 +297,7 @@ def portal_auth(request: HttpRequest):
             )
 
         logger.info(f"auth_data:  {auth_data}")
+        print(f"auth_data:  {auth_data}. url: {controller_url}")
 
         response = requests.post(
             controller_url,
