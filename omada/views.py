@@ -297,6 +297,8 @@ def portal_auth(request: HttpRequest):
             verify=settings.OMADA_CONTROLLER_VERIFY_SSL,
         )
 
+        print("response:  ", response.text)
+        print("response headers:  ", response.headers)
         if response.status_code == 200:
             return JsonResponse(
                 {
