@@ -94,7 +94,9 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <input type="hidden" name="clientMac" value="{{ clientMac }}">
+            <input type="hidden" name="clientMac" value="{{ client_mac }}">
+            <input type="hidden" name="siteName" value="{{ site_name }}">
+            <input type="hidden" name="session" value="{{ session }}">
             <button type="submit">Login</button>
             <div class="error-message" id="errorMessage"></div>
         </form>
