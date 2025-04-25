@@ -133,6 +133,8 @@ def portal_login(request: HttpRequest):
     - redirectUrl: URL to redirect after authentication
     - t: Timestamp
     """
+
+    print("cookie is: ", request.COOKIES)
     if request.method == "POST":
         return portal_auth(request)
     try:
@@ -180,15 +182,12 @@ def get_omada_token(username, password):
     print("getting omada token")
     try:
         login_url = f"{settings.OMADA_CONTROLLER_URL}api/v2/hotspot/login"
-        print("login_url:  ", login_url)
         response = requests.post(
             login_url,
             json={"name": username, "password": password},
             verify=settings.OMADA_CONTROLLER_VERIFY_SSL,
         )
 
-        print("omada content:  ", response.text)
-        print("omada headers:  ", response.headers)
         if response.status_code == 200:
             data = response.json()
             if (
@@ -196,7 +195,7 @@ def get_omada_token(username, password):
                 and "result" in data
                 and "token" in data["result"]
             ):
-                return data["result"]["token"]
+                return data["result"]["token"], response.headers.get("Set-Cookie")
 
         return None
     except Exception as e:
@@ -248,9 +247,12 @@ def portal_auth(request: HttpRequest):
                 status=401,
             )
         # Get Omada token
-        token = get_omada_token(
+        token, cookie = get_omada_token(
             settings.OMADA_CONTROLLER_USERNAME, settings.OMADA_CONTROLLER_PASSWORD
         )
+
+        print("cookie is: ", cookie)
+        print("token is: ", token)
 
         if not token:
             return JsonResponse(
@@ -267,7 +269,7 @@ def portal_auth(request: HttpRequest):
         session.save()
 
         # Send authentication to Omada Controller
-        controller_url = f"{settings.OMADA_CONTROLLER_URL}api/v2/hotspot/extPortal/auth"
+        controller_url = f"{settings.OMADA_CONTROLLER_URL}portal/auth"
         auth_data = {
             "clientMac": data["clientMac"],
             "site": session.site_name,
@@ -290,15 +292,20 @@ def portal_auth(request: HttpRequest):
 
         logger.info(f"auth_data:  {auth_data}")
         print(f"auth_data:  {auth_data}. url: {controller_url}")
+        headers = {
+            "Csrf-Token": token,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+        cookies = {c.split("=")[0]: c.split("=")[1] for c in cookie.split(";")}
+        print("cookies are: ", cookies)
 
+        print(f"Headers: {headers}")
         response = requests.post(
             controller_url,
             json=auth_data,
-            headers={
-                "Csrf-Token": token,
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
+            headers=headers,
+            cookies=cookies,
             verify=settings.OMADA_CONTROLLER_VERIFY_SSL,
         )
 
