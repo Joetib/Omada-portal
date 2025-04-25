@@ -11,6 +11,10 @@ from .models import OmadaDevice, OmadaClient, PortalSession
 
 # Create your views here.
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -307,10 +311,12 @@ def portal_auth(request: HttpRequest):
             )
 
     except PortalSession.DoesNotExist:
+        print("PortalSession.DoesNotExist")
         return JsonResponse(
             {"status": "error", "message": "Session not found"}, status=404
         )
     except Exception as e:
+        logger.error(f"Error in portal_auth: {str(e)}", exc_info=True)
         return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
 
