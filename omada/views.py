@@ -271,16 +271,8 @@ def portal_auth(request: HttpRequest):
         auth_data = {
             "clientMac": data["clientMac"],
             "site": session.site_name,
-            "time": 60 * 5,
+            "time": 60 * 5 * 1000,  # 5 minutes in milliseconds
             "authType": 4,
-        }
-        {
-            "clientMac": "CLIENT_MAC",
-            "gatewayMac": "GATEWAY_MAC",
-            "vid": "VLAN_ID ",
-            "site": "SITE_NAME",
-            "time": "EXPIRE_TIME",
-            "authType": "4",
         }
 
         if session.ap_mac:
