@@ -276,6 +276,14 @@ def portal_auth(request: HttpRequest):
             "time": 60 * 5,
             "authType": 4,
         }
+        {
+            "clientMac": "CLIENT_MAC",
+            "gatewayMac": "GATEWAY_MAC",
+            "vid": "VLAN_ID ",
+            "site": "SITE_NAME",
+            "time": "EXPIRE_TIME",
+            "authType": "4",
+        }
 
         if session.ap_mac:
             auth_data.update(
@@ -290,10 +298,16 @@ def portal_auth(request: HttpRequest):
                 {"gatewayMac": session.gateway_mac, "vid": session.vlan_id}
             )
 
+        logger.info(f"auth_data:  {auth_data}")
+
         response = requests.post(
             controller_url,
             json=auth_data,
-            headers={"Csrf-Token": session.token},
+            headers={
+                "Csrf-Token": token,
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
             verify=settings.OMADA_CONTROLLER_VERIFY_SSL,
         )
 
