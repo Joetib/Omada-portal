@@ -177,6 +177,7 @@ def get_omada_token(username, password):
         response = requests.post(
             login_url,
             json={"name": username, "password": password},
+            verify=settings.OMADA_CONTROLLER_VERIFY_SSL,
         )
 
         print("omada content:  ", response.text)
@@ -279,7 +280,7 @@ def portal_auth(request: HttpRequest):
             controller_url,
             json=auth_data,
             headers={"Csrf-Token": session.token},
-            verify=False,  # For self-signed certificates
+            verify=settings.OMADA_CONTROLLER_VERIFY_SSL,
         )
 
         if response.status_code == 200:
